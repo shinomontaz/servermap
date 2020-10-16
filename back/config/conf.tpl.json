@@ -1,0 +1,7 @@
+{
+    "ListenPort":"1111",
+    "TestFlag":true,
+
+    "HostsFile": "files/hosts.xml",
+	"VmsFile":   "files/vms.xml"
+}

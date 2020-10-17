@@ -8,8 +8,8 @@ type Host struct {
 	Cpu                 Cpu
 	ExternalStatus      string
 	Hardware            Hardware
-	MaxSchedulingMemory int64
-	Memory              int64
+	MaxSchedulingMemory string
+	Memory              string
 	Os                  Os
 	Port                int
 	Status              string
@@ -29,8 +29,8 @@ func HostFromXml(xHost XMLHost) Host {
 		Cpu:                 CpuFromXml(xHost.Cpu),
 		ExternalStatus:      xHost.Name,
 		Hardware:            xHost.HardwareInformation.Hardware,
-		MaxSchedulingMemory: xHost.MaxSchedulingMemory,
-		Memory:              xHost.Memory,
+		MaxSchedulingMemory: ByteCountSI(xHost.MaxSchedulingMemory),
+		Memory:              ByteCountSI(xHost.Memory),
 		Os:                  OsFromXml(xHost.Os),
 		Port:                xHost.Port,
 		Status:              xHost.Status,

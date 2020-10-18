@@ -16,6 +16,12 @@ func (s *Service) Index(w http.ResponseWriter, r *http.Request) {
 
 	// return json tree for hosts with attached vms each
 
+	// jsonData, err := json.Marshal(s.hosts)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// fmt.Println(string(jsonData))
+
 	json.NewEncoder(w).Encode(s.hosts)
 
 	//	json.NewEncoder(w).Encode(Message{Text: "Ovirt viewer", Type: i8s.TypeSUCCESS})

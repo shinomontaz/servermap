@@ -1,11 +1,14 @@
 package i8s
 
 func VmFromXml(xVm XMLVm, hosts map[string]*Host) Vm {
-	h := hosts[xVm.Host.ID]
+	h, ok := hosts[xVm.Host.ID]
+	if !ok {
+		h = hosts["nonexist"] // TODO: magick const
+	}
 	return Vm{
 		ID:               xVm.ID,
 		Name:             xVm.Name,
-		Host:             h,
+		Host:             h.ID,
 		Cpu:              VCpuFromXml(xVm.Cpu),
 		CpuShares:        xVm.CpuShares,
 		CreationTime:     xVm.CreationTime,
@@ -26,7 +29,7 @@ func VmFromXml(xVm XMLVm, hosts map[string]*Host) Vm {
 type Vm struct {
 	ID               string
 	Name             string
-	Host             *Host
+	Host             string
 	Cpu              VCpu
 	CpuShares        int
 	CreationTime     string

@@ -14,6 +14,8 @@ class App extends Component {
     this.state = {
       listHost: []
     };
+    this.sizer = React.createRef();
+    this.element = React.createRef();
   }
 
   async componentDidMount() {
@@ -26,7 +28,7 @@ class App extends Component {
   render() {
     const { listHost } = this.state;
     return (
-      <div>
+      <div className="App">
       <Card.Group>
       { listHost.map((item)  => <Host data={item} key={item.ID} /> ) }
       </Card.Group>

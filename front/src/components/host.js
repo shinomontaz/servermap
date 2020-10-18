@@ -1,33 +1,49 @@
 import React, { Component } from "react";
-import { Card, Segment, List } from 'semantic-ui-react'
+import { Header, Segment } from 'semantic-ui-react'
 import Vm from './vm';
+import Shuffle from 'shufflejs'
 
 class Host extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      listVm: []
+    };
+    this.sizer = React.createRef();
+    this.element = React.createRef();
+  }
+
+  async componentDidMount() {
+    this.shuffle = new Shuffle(this.element.current, {
+      itemSelector: '.vm-item',
+      sizer: this.sizer.current,
+    });
+  }
+
+  async componentDidUpdate() {
+    if (this.shuffle) {
+      this.shuffle.resetItems();
+    }
+  }
+
   render() {
     const { data } = this.props;
     return (
-      <Card>
-            <Card.Content>
-            <Card.Header>{data.Name}</Card.Header>
-            <Card.Meta>
-              <span className='address'>{data.Address}</span>
-              <span className='comment'>({data.Comment})</span>
-            </Card.Meta>
-            <Card.Description>
-            <div>{data.Cpu.Cores}xCore {data.Cpu.Name}</div>
-            <div>{data.Memory}</div>
-            </Card.Description>
-            <Card.Content extra>
-            <Card.Group itemsPerRow={2}>
-            { data.Vms.map((item)  => <Vm data={item} key={item.ID} /> ) }
-            </Card.Group>
-            </Card.Content>
-          </Card.Content>
-          </Card>
+      <Segment className="host-item" floated='left' style={{minWidth: "15%", width: data.Vms.length > 12 ? "40%" : "20%" }}>
+        <Header as='h5'>{data.Name}</Header>
+        <div className='meta'>
+        {data.Address} ({data.Comment})
+        </div>
+        <div>{data.Cpu.Cores}x Core {data.Cpu.Name}</div>
+        <div>{data.Memory}</div>
+        <div ref={this.element}>
+        { data.Vms.map((item)  => <Vm data={item} key={item.ID} /> ) }
+        </div>
+      </Segment>
     );
   }
 }
 
-//            <Card.Group itemsPerRow={ data.Vms.length == 0 ? 1 : data.Vms.length > 12 ? 4 : data.Vms.length > 8 ? 3 : 2}>
+//      <Segment className="col-3@xs col-4@sm host-item" compact style={{maxWidth: "30%"}}>
 
 export default Host;

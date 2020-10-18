@@ -5,7 +5,7 @@ class Vm extends Component {
   render() {
       const { data } = this.props;
       return (
-    <Card >
+    <Segment  className="col-3@xs col-4@sm vm-item" compact floated='left'>
       <Card.Content>
         <Card.Header>{data.Name}</Card.Header>
         <Card.Meta>{data.OperatingSystem.Distribution}</Card.Meta>
@@ -26,7 +26,7 @@ class Vm extends Component {
     </Menu.Item>
   </Menu>
       </Card.Content>
-    </Card>
+    </Segment>
       );
   }
 }

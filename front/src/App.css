@@ -1,5 +1,5 @@
 .App {
-  padding: 1em;
+  padding: 2em;
   font-size: 1em;
 }
 
@@ -27,6 +27,30 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.ui.segment.host-item:hover {
+  background-color: #717579 !important;
+}
+
+.container {
+  padding-left: 3.5%;
+  padding-right: 3.5%;
+}
+
+.container:after,
+.container:before {
+  content: " ";
+  display: table;
+}
+
+.container:after {
+  clear: both;
+}
+
+.hosts-shuffle-container {
+  position: relative;
+  overflow: hidden;
 }
 
 @keyframes App-logo-spin {

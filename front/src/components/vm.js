@@ -10,7 +10,7 @@ class Vm extends Component {
   render() {
       const { data, types } = this.props;
       return (
-    <Segment  className="col-3@xs col-4@sm vm-item" compact floated='left' data-groups={this.getDataGroups(types, data.Name)}>
+    <Segment className="vm-item" data-groups={this.getDataGroups(types, data.Name)}>
       <Card.Content>
         <Card.Header>{data.Name}</Card.Header>
         <Card.Meta>{data.OperatingSystem.Distribution}</Card.Meta>

@@ -27,7 +27,7 @@ class Host extends Component {
   }
 
   render() {
-    const { data } = this.props;
+    const { data, types } = this.props;
     return (
       <Segment className="host-item" floated='left' style={{minWidth: "15%", width: data.Vms.length > 12 ? "40%" : "20%" }}>
         <Header as='h5'>{data.Name}</Header>
@@ -37,7 +37,7 @@ class Host extends Component {
         <div>{data.Cpu.Cores}x Core {data.Cpu.Name}</div>
         <div>{data.Memory}</div>
         <div ref={this.element}>
-        { data.Vms.map((item)  => <Vm data={item} key={item.ID} /> ) }
+        { data.Vms.map((item)  => <Vm data={item} key={item.ID} types={types}/> ) }
         </div>
       </Segment>
     );

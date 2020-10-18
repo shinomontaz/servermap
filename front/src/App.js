@@ -18,6 +18,7 @@ const vmTypes = [
 {key: "elk", text: "elk", value: "elk"},
 {key: "pgbouncer", text: "pgbouncer", value: "pgbouncer"},
 {key: "ldap", text: "ldap", value: "ldap"},
+{key: "rabbit", text: "rabbit", value: "rabbit"},
 ];
 
 class App extends Component {
@@ -65,7 +66,7 @@ class App extends Component {
       </Menu>
       </Sticky>
         <div ref={this.element}>
-        { listHost.map((item)  => <Host data={item} key={item.ID} /> ) }
+        { listHost.map((item)  => <Host data={item} key={item.ID} types={this.state.vmTypes}/> ) }
         </div>
       </div>
     );

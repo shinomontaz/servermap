@@ -15,6 +15,7 @@ func VmFromXml(xVm XMLVm, hosts map[string]*Host) Vm {
 		Display:          xVm.Display.Display,
 		HighAvailability: xVm.HighAvailability,
 		Memory:           ByteCountSI(xVm.Memory),
+		RawMem:           xVm.Memory,
 		MemoryPolicy:     xVm.MemoryPolicy,
 		Os:               xVm.Os.Type,
 		Type:             xVm.Type,
@@ -36,6 +37,7 @@ type Vm struct {
 	Display          Display
 	HighAvailability XMLHighAvailability
 	Memory           string
+	RawMem           int64
 	MemoryPolicy     XMLMemoryPolicy
 	Os               string
 	Type             string

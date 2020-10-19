@@ -22,8 +22,6 @@ const vmTypes = [
 
 const masonryOptions = {
   itemSelector: ".host-item",
-  columnWidth: 210,
-  fitWidth: true
 };
 
 class App extends Component {
@@ -39,7 +37,6 @@ class App extends Component {
       openAll: false,
       hidden: true,
     };
-    this.sizer = React.createRef();
     this.element = React.createRef();
     this.contextRef = React.createRef();
   }
@@ -73,7 +70,7 @@ class App extends Component {
       var listHost = await api.loadHosts(this.state.vmType);
       this.setState({
         listHost,
-        openAll: this.state.vmType != "" ? true : false
+        openAll: this.state.vmType !== "" ? true : false
       });
     }
   }
@@ -83,15 +80,15 @@ class App extends Component {
   handleContentsLoaded = () => this.setState({ hidden: false });
 
   render() {
-    const { listHost, vmType, maxVms, openAll, hidden } = this.state;
+    const { listHost, vmType, maxVms, openAll, hidden, maxRam, maxCpu } = this.state;
     return (
       <div ref={this.contextRef} className="App">
       <Sticky context={this.contextRef} style={{backgroundColor: "white"}}>
       <Menu
-            attached='top'
-            tabular
-            style={{ backgroundColor: '#fff', paddingBottom: '1em' }}
-          >
+          attached='top'
+          tabular
+          style={{ backgroundColor: '#fff', paddingBottom: '1em' }}
+      >
       <Dropdown selection options={this.state.vmTypes} value={vmType} onChange={this.handleChangeVmType}  style={{backgroundColor: "white"}}/>
       </Menu>
       </Sticky>
@@ -102,7 +99,7 @@ class App extends Component {
           onImagesLoaded={this.handleContentsLoaded}
           visibility = {hidden}
         >
-          { listHost.map((item)  => <Host data={item} key={item.ID} types={this.state.vmTypes} open={openAll} /> ) }
+          { listHost.map((item) => <Host data={item} key={item.ID} types={this.state.vmTypes} maxRam={maxRam} maxCpu={maxCpu} open={openAll} /> ) }
         </Masonry>
         </div>
       </div>

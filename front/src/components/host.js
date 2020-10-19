@@ -1,6 +1,9 @@
 import React, { Component } from "react";
-import { Header, Segment, Transition, Card } from 'semantic-ui-react'
+import { Header, Segment, Transition, Popup, Table } from 'semantic-ui-react'
 import Vm from './vm';
+import Ram from './ram';
+import Cpu from './cpu';
+
 import Masonry from 'react-masonry-component';
 
 const masonryOptions = {
@@ -12,53 +15,70 @@ class Host extends Component {
     super(props);
     this.state = {
       listVm: [],
-      open: false,
+      open: props.open,
     };
-    this.sizer = React.createRef();
-    this.element = React.createRef();
+
+    props.data.Vms.sort((v1, v2) => {
+      return v2.Cpu.Cores - v1.Cpu.Cores;
+    });
   }
 
   async componentDidMount() {
   }
 
-  async componentDidUpdate() {
-  }
-
-
   toggleOpen = () => this.setState((prevState) => ({ open: !prevState.open }))
 
   render() {
-    const { data, types, maxVms } = this.props;
+    const { data, types, maxVms, maxRam, maxCpu } = this.props;
     const isSpecial = data.Name == 'nonexist' || data.Vms.length == 0
-
-//    const width = Math.floor( data.Vms.length > 0 ? (( data.Vms.length / maxVms) * 10 ) : 1 ) * 10;
-
+    const rows = data.Vms.length/ 2;
     return (
       <Segment
       className="host-item"
       style={{minWidth: "10%", maxWidth: "99%" }}
       inverted={isSpecial ? true : false}
-      color={isSpecial ? 'red' : 'black'}
+      color={isSpecial ? 'red' : null}
       tertiary={isSpecial}
       onClick={this.toggleOpen}
+      circular
       >
         <Header as='h5'>{data.Name}</Header>
         <div className='meta'>
-        {data.Address} ({data.Comment})
+        {data.Address}
         </div>
-        <div>{data.Cpu.Cores}x Core {data.Cpu.Name}</div>
-        <div>{data.Memory}</div>
-        <div ref={this.element}>
+        <Popup
+          trigger={<div><Ram total={data.RawMem} maxRam={maxRam} current={data.Vms.reduce((acc,vm)=>{
+            return acc + vm.RawMem
+          },0)} /></div>}
+          content={data.Memory}
+          basic
+        />
+        <Popup
+            trigger={<div><Cpu total={data.Cpu.Cores * data.Cpu.Threads} maxCpu={maxCpu} current={data.Vms.reduce((acc,vm)=>{
+              return acc + (vm.Cpu.Cores * vm.Cpu.Threads)
+            },0)} /></div>}
+            content={data.Cpu.Cores+"x Core "+ data.Cpu.Name}
+            basic
+        />
         <Transition visible={this.state.open} animation='scale'>
-          <Card.Group>
-          { data.Vms.map((item)  => <Vm data={item} key={item.ID} types={types}/> ) }
-          </Card.Group>
-        </Transition>
+        <div>
+          <Table className="vm-item"  basic='very' celled collapsing >
+          <Table.Header>
+             <Table.Row>
+               <Table.HeaderCell></Table.HeaderCell>
+               <Table.HeaderCell>Ram</Table.HeaderCell>
+               <Table.HeaderCell>vCpu</Table.HeaderCell>
+             </Table.Row>
+           </Table.Header>
+            <Table.Body>
+            {data.Vms.map((item) => <Vm data={item} key={item.ID} types={types} maxRam={data.RawMem} maxCpu={data.Cpu.Cores * data.Cpu.Threads} /> )}
+            </Table.Body>
+          </Table>
         </div>
+        </Transition>
       </Segment>
     );
   }
 }
-//      <Segment className="host-item" compact style={{maxWidth: "30%"}}>
 
 export default Host;

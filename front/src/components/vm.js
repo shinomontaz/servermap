@@ -1,32 +1,27 @@
 import React, { Component } from "react";
-import { Menu, Card, Segment, Label, Icon } from 'semantic-ui-react'
+import { Header, Popup, Segment, Label, Icon, Table } from 'semantic-ui-react'
+import Ram from './ram';
+import Cpu from './cpu';
 
 class Vm extends Component {
   render() {
-      const { data, types } = this.props;
+      var { data, types, maxRam, maxCpu } = this.props;
       return (
-    <Card className="vm-item">
-      <Card.Content>
-        <Card.Header>{data.Name}</Card.Header>
-        <Card.Meta>{data.OperatingSystem.Distribution}</Card.Meta>
-      </Card.Content>
-      <Card.Content extra>
-      <Menu compact>
-    <Menu.Item as='a'>
-      <Icon name='th' />
-      <Label floating>
-        {data.Cpu.Cores}
-      </Label>
-    </Menu.Item>
-    <Menu.Item as='a'>
-      <Icon name='microchip' />
-      <Label floating>
-        {data.Memory}
-      </Label>
-    </Menu.Item>
-  </Menu>
-      </Card.Content>
-    </Card>
+      <Table.Row>
+      <Table.Cell>
+      <Popup
+        trigger={<Header as='h5'>{data.Name}</Header>}
+        content={data.OperatingSystem.Distribution}
+        basic
+      />
+      </Table.Cell>
+      <Table.Cell>
+      {data.Memory}
+      </Table.Cell>
+      <Table.Cell>
+      {data.Cpu.Cores}
+      </Table.Cell>
+      </Table.Row>
       );
   }
 }

@@ -1,5 +1,7 @@
 package i8s
 
+import "strings"
+
 type Host struct {
 	ID                  string
 	Name                string
@@ -10,6 +12,7 @@ type Host struct {
 	Hardware            Hardware
 	MaxSchedulingMemory string
 	Memory              string
+	RawMem              int64
 	Os                  Os
 	Port                int
 	Status              string
@@ -31,6 +34,7 @@ func HostFromXml(xHost XMLHost) Host {
 		Hardware:            xHost.HardwareInformation.Hardware,
 		MaxSchedulingMemory: ByteCountSI(xHost.MaxSchedulingMemory),
 		Memory:              ByteCountSI(xHost.Memory),
+		RawMem:              xHost.Memory,
 		Os:                  OsFromXml(xHost.Os),
 		Port:                xHost.Port,
 		Status:              xHost.Status,
@@ -126,18 +130,18 @@ type XMLHost struct {
 type Cpu struct {
 	Name    string
 	Speed   string
-	Cores   string
-	Sockets string
-	Threads string
+	Cores   int
+	Sockets int
+	Threads int
 }
 
 type XMLHostCpu struct {
 	Name     string `xml:"name"`
 	Speed    string `xml:"speed"`
 	Topology struct {
-		Cores   string `xml:"cores"`
-		Sockets string `xml:"sockets"`
-		Threads string `xml:"threads"`
+		Cores   int `xml:"cores"`
+		Sockets int `xml:"sockets"`
+		Threads int `xml:"threads"`
 	} `xml:"topology"`
 }
 
@@ -193,4 +197,17 @@ type XMLHostOs struct {
 		FullVersion string `xml:"full_version"`
 		Major       string `xml:"major"`
 	} `xml:"version"`
+}
+
+func (h Host) Filter(vmType string) Host {
+	copyHost := h
+	copyHost.Vms = make([]*Vm, 0)
+
+	for _, vm := range h.Vms {
+		if strings.Contains(vm.Name, vmType) {
+			copyHost.Vms = append(copyHost.Vms, vm)
+		}
+	}
+
+	return copyHost
 }

@@ -8,8 +8,6 @@ import 'semantic-ui-css/semantic.min.css'
 import { Dropdown, Sticky, Menu } from 'semantic-ui-react'
 import Masonry from 'react-masonry-component';
 
-import Shuffle from 'shufflejs'
-
 const vmTypes = [
 {key: "all", text: "--All--", value: ""},
 {key: "redis", text: "redis", value: "redis"},
@@ -24,7 +22,7 @@ const vmTypes = [
 
 const masonryOptions = {
   itemSelector: ".host-item",
-  columnWidth: 220,
+  columnWidth: 210,
   fitWidth: true
 };
 
@@ -36,7 +34,10 @@ class App extends Component {
       vmTypes: vmTypes,
       vmType: vmTypes[0].value,
       maxVms: 0,
-      meanVms: 0
+      maxCpu: 0,
+      maxRam: 0,
+      openAll: false,
+      hidden: true,
     };
     this.sizer = React.createRef();
     this.element = React.createRef();
@@ -44,7 +45,7 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    var listHost = await api.loadHosts();
+    var listHost = await api.loadHosts(this.state.vmType);
 
     listHost.sort((h1, h2) => {
       return h2.Vms.length - h1.Vms.length;
@@ -54,30 +55,35 @@ class App extends Component {
 
     listHost.sort(() => { return 0.5 - Math.random() });
 
-    // this.state.maxVms = listHost.reduce((acc,host)=>{
-    //   return acc > host.Vms.length ? acc : host.Vms.length
-    // },0);
+    this.state.maxCpu = listHost.reduce((acc,host)=>{
+      return acc > host.Cpu.Cores * host.Cpu.Threads ? acc : host.Cpu.Cores * host.Cpu.Threads
+    },0);
+
+    this.state.maxRam = listHost.reduce((acc,host)=>{
+      return acc > host.RawMem ? acc : host.RawMem
+    },0);
 
     this.setState({
       listHost
     });
-
-    // this.shuffle = new Shuffle(this.element.current, {
-    //   itemSelector: '.host-item',
-    //   sizer: this.sizer.current,
-    // });
   }
 
-  async componentDidUpdate() {
-    // if (this.shuffle) {
-    //   this.shuffle.resetItems();
-    // }
+  async componentDidUpdate(prevProps, prevState) {
+    if (this.state.vmType !== prevState.vmType) {
+      var listHost = await api.loadHosts(this.state.vmType);
+      this.setState({
+        listHost,
+        openAll: this.state.vmType != "" ? true : false
+      });
+    }
   }
 
   handleChangeVmType = (e, { value }) => this.setState({ vmType: value });
 
+  handleContentsLoaded = () => this.setState({ hidden: false });
+
   render() {
-    const { listHost, vmType, maxVms, meanVms } = this.state;
+    const { listHost, vmType, maxVms, openAll, hidden } = this.state;
     return (
       <div ref={this.contextRef} className="App">
       <Sticky context={this.contextRef} style={{backgroundColor: "white"}}>
@@ -86,12 +92,17 @@ class App extends Component {
             tabular
             style={{ backgroundColor: '#fff', paddingBottom: '1em' }}
           >
-      <Dropdown selection options={this.state.vmTypes} value={vmType} onChange={this.handleChangeVmType}/>
+      <Dropdown selection options={this.state.vmTypes} value={vmType} onChange={this.handleChangeVmType}  style={{backgroundColor: "white"}}/>
       </Menu>
       </Sticky>
         <div ref={this.element}>
-        <Masonry className="grid" options={masonryOptions}>
-          { listHost.map((item)  => <Host data={item} key={item.ID} types={this.state.vmTypes} maxVms={maxVms} meanVms={meanVms} /> ) }
+        <Masonry
+          className="grid"
+          options={masonryOptions}
+          onImagesLoaded={this.handleContentsLoaded}
+          visibility = {hidden}
+        >
+          { listHost.map((item)  => <Host data={item} key={item.ID} types={this.state.vmTypes} open={openAll} /> ) }
         </Masonry>
         </div>
       </div>

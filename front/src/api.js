@@ -24,8 +24,8 @@ console.log(resp.data)
       return resp.data;
   };
 
-loadHosts = async () => {
-  var { data: hosts } = await axios.get(API_URL);
+loadHosts = async ( vmtype ) => {
+  var { data: hosts } = await axios.get(API_URL, {params: { vmtype: vmtype }} );
   return hosts
  }
     // this.apiCall({

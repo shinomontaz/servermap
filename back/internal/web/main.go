@@ -2,7 +2,6 @@ package web
 
 import (
 	"encoding/xml"
-	"fmt"
 	"io/ioutil"
 	"servermap/i8s"
 )
@@ -78,7 +77,6 @@ func (s *Service) initVms(filename string) {
 	for _, xVm := range xmlVms.Vms {
 		v := i8s.VmFromXml(xVm, s.hIdIndex)
 		s.hIdIndex[v.Host].Vms = append(s.hIdIndex[v.Host].Vms, &v)
-		fmt.Println("host for VM: ", v.ID, v.Host)
 
 		s.vms = append(s.vms, &v)
 

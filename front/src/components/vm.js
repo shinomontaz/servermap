@@ -2,15 +2,10 @@ import React, { Component } from "react";
 import { Menu, Card, Segment, Label, Icon } from 'semantic-ui-react'
 
 class Vm extends Component {
-  getDataGroups = (types, name) => {
-    var currTypes = types.filter(type => name.includes(type.value)).map(filteredType => filteredType.key);
-    return currTypes;
-  }
-
   render() {
       const { data, types } = this.props;
       return (
-    <Segment className="vm-item" data-groups={this.getDataGroups(types, data.Name)}>
+    <Card className="vm-item">
       <Card.Content>
         <Card.Header>{data.Name}</Card.Header>
         <Card.Meta>{data.OperatingSystem.Distribution}</Card.Meta>
@@ -31,7 +26,7 @@ class Vm extends Component {
     </Menu.Item>
   </Menu>
       </Card.Content>
-    </Segment>
+    </Card>
       );
   }
 }

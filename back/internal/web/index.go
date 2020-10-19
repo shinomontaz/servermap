@@ -3,6 +3,7 @@ package web
 import (
 	"encoding/json"
 	"net/http"
+	"servermap/i8s"
 )
 
 type Message struct {
@@ -16,13 +17,27 @@ func (s *Service) Index(w http.ResponseWriter, r *http.Request) {
 
 	// return json tree for hosts with attached vms each
 
-	// jsonData, err := json.Marshal(s.hosts)
-	// if err != nil {
-	// 	log.Println(err)
-	// }
-	// fmt.Println(string(jsonData))
+	vmTypes, ok := r.URL.Query()["vmtype"]
+	var vmType string
 
-	json.NewEncoder(w).Encode(s.hosts)
+	if ok {
+		vmType = vmTypes[0]
+	}
 
-	//	json.NewEncoder(w).Encode(Message{Text: "Ovirt viewer", Type: i8s.TypeSUCCESS})
+	hosts := s.filterByType(vmType)
+
+	json.NewEncoder(w).Encode(hosts)
+}
+
+func (s *Service) filterByType(vmType string) []*i8s.Host {
+	res := make([]*i8s.Host, 0, len(s.hosts))
+
+	for _, host := range s.hosts {
+		filteredHost := host.Filter(vmType)
+		if vmType == "" || len(filteredHost.Vms) > 0 {
+			res = append(res, &filteredHost)
+		}
+	}
+
+	return res
 }

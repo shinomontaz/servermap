@@ -28,7 +28,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      listHost: [],
+      listDC: [],
       vmTypes: vmTypes,
       vmType: vmTypes[0].value,
       maxVms: 0,
@@ -39,6 +39,14 @@ class App extends Component {
     };
     this.element = React.createRef();
     this.contextRef = React.createRef();
+  }
+
+  prepareListDc = ( listHost ) => {
+    return listHost.reduce(function(r, h){
+    var k = h.Comment.trim();
+    if (r[k] || (r[k]=[])) r[k].push(h);
+    return r;
+  }, {});
   }
 
   async componentDidMount() {
@@ -61,15 +69,16 @@ class App extends Component {
     },0);
 
     this.setState({
-      listHost
+      listDC: this.prepareListDc(listHost)
     });
   }
 
   async componentDidUpdate(prevProps, prevState) {
     if (this.state.vmType !== prevState.vmType) {
       var listHost = await api.loadHosts(this.state.vmType);
+
       this.setState({
-        listHost,
+        listDC: this.prepareListDc(listHost),
         openAll: this.state.vmType !== "" ? true : false
       });
     }
@@ -80,7 +89,7 @@ class App extends Component {
   handleContentsLoaded = () => this.setState({ hidden: false });
 
   render() {
-    const { listHost, vmType, maxVms, openAll, hidden, maxRam, maxCpu } = this.state;
+    const { listDC, vmType, openAll, hidden, maxRam, maxCpu } = this.state;
     return (
       <div ref={this.contextRef} className="App">
       <Sticky context={this.contextRef} style={{backgroundColor: "white"}}>
@@ -93,14 +102,22 @@ class App extends Component {
       </Menu>
       </Sticky>
         <div ref={this.element}>
-        <Masonry
-          className="grid"
-          options={masonryOptions}
-          onImagesLoaded={this.handleContentsLoaded}
-          visibility = {hidden}
-        >
-          { listHost.map((item) => <Host data={item} key={item.ID} types={this.state.vmTypes} maxRam={maxRam} maxCpu={maxCpu} open={openAll} /> ) }
-        </Masonry>
+        {
+          Object.entries(listDC).map( ([key, dc]) => (
+            <div>
+            <h1>{key}</h1>
+            <Masonry
+              className="grid"
+              options={masonryOptions}
+              onImagesLoaded={this.handleContentsLoaded}
+              visibility = {hidden}
+            >
+            { dc.map((item) => <Host data={item} key={item.ID} types={this.state.vmTypes} maxRam={maxRam} maxCpu={maxCpu} open={openAll} /> ) }
+            </Masonry>
+            <hr/>
+            </div>
+          ))
+        }
         </div>
       </div>
     );

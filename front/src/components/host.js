@@ -4,12 +4,6 @@ import Vm from './vm';
 import Ram from './ram';
 import Cpu from './cpu';
 
-import Masonry from 'react-masonry-component';
-
-const masonryOptions = {
-  itemSelector: ".vm-item",
-};
-
 class Host extends Component {
   constructor(props) {
     super(props);
@@ -29,9 +23,9 @@ class Host extends Component {
   toggleOpen = () => this.setState((prevState) => ({ open: !prevState.open }))
 
   render() {
-    const { data, types, maxVms, maxRam, maxCpu } = this.props;
-    const isSpecial = data.Name == 'nonexist' || data.Vms.length == 0
-    const rows = data.Vms.length/ 2;
+    const { data, types, maxRam, maxCpu } = this.props;
+    const isSpecial = data.Name === 'nonexist' || data.Vms.length === 0
+//    const rows = data.Vms.length/ 2;
     return (
       <Segment
       className="host-item"

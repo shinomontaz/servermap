@@ -1,11 +1,9 @@
 import React, { Component } from "react";
-import { Header, Popup, Segment, Label, Icon, Table } from 'semantic-ui-react'
-import Ram from './ram';
-import Cpu from './cpu';
+import { Header, Popup, Table } from 'semantic-ui-react'
 
 class Vm extends Component {
   render() {
-      var { data, types, maxRam, maxCpu } = this.props;
+      var { data } = this.props;
       return (
       <Table.Row>
       <Table.Cell>
